@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pustaka Tugas - Digital Bookstore</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-book-open-reader"></i>
+            <span>PustakaTugas</span>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Cari nama file atau tugas..." onkeyup="filterBooks()">
+            <button><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-text">
+            <h1>Toko Buku Digital Tugas Kuliah</h1>
+            <p>Terhubung langsung dengan Google Drive API v3 via Client-Side JavaScript.</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <h2 class="section-title">Katalog File Tugas</h2>
+        
+        <div class="loading" id="loading">
+            <i class="fa-solid fa-spinner fa-spin"></i> Memuat data dari Google Drive...
+        </div>
+
+        <div class="book-grid" id="bookGrid">
+            <!-- Kartu Buku dimuat dinamis oleh JavaScript -->
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 PustakaTugas. Hosted on GitHub Pages & Powered by Google Drive API.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
