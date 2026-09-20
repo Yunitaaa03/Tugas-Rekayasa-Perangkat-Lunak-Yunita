@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PustakaTugas 3D - Digital Bookstore</title>
+    <title>PustakaTugas - Digital Bookstore</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="light-mode">
+<body class="dark-mode">
+
+    <!-- BACKGROUND ANIMASI RAK BUKU NAIK DARI BAWAH -->
+    <div class="bookshelf-bg" id="bookshelfBg">
+        <div class="shelf-shelf top-shelf"></div>
+        <div class="shelf-shelf middle-shelf"></div>
+        <div class="shelf-shelf bottom-shelf"></div>
+    </div>
 
     <!-- Header / Navbar -->
     <header class="navbar">
@@ -23,22 +30,22 @@
 
         <div class="nav-actions">
             <button id="themeToggle" class="icon-btn" title="Ubah Tema" onclick="toggleTheme()">
-                <i class="fa-solid fa-moon"></i>
+                <i class="fa-solid fa-sun"></i>
             </button>
         </div>
     </header>
 
-    <!-- Banner Hero Interaktif -->
+    <!-- Banner Hero -->
     <section class="hero">
         <div class="hero-content">
             <h1><i class="fa-solid fa-graduation-cap"></i> Rak Tugas Interaktif</h1>
-            <p>Jelajahi, pratinjau, dan unduh dokumen kuliah langsung dari Google Drive.</p>
+            <p>Terhubung langsung dengan Google Drive API untuk menjelajahi dan mengunduh berkas kuliah.</p>
         </div>
     </section>
 
     <!-- Container Utama -->
     <main class="container">
-        <!-- Control Panel: Breadcrumb, Filter, & Sort -->
+        <!-- Control Panel: Breadcrumb Navigasi & Filter -->
         <div class="control-panel">
             <div class="breadcrumb" id="breadcrumb">
                 <!-- Breadcrumb dinamis via JS -->
@@ -46,13 +53,11 @@
 
             <div class="filter-sort-group">
                 <select id="filterType" onchange="filterAndSort()">
-                    <option value="all"> Semua Format</option>
-                    <option value="folder"> Folder</option>
-                    <option value="pdf"> PDF</option>
-                    <option value="doc"> Word (DOC)</option>
-                    <option value="archive"> Zip/Rar</option>
-                    <option value="png"> PNG</option>
-                    <option value="jpg"> JPG</option>
+                    <option value="all">Semua Format</option>
+                    <option value="folder">Folder</option>
+                    <option value="pdf">PDF</option>
+                    <option value="doc">Word (DOC)</option>
+                    <option value="archive">Zip/Rar</option>
                 </select>
 
                 <select id="sortBy" onchange="filterAndSort()">
@@ -67,12 +72,12 @@
         <!-- Loading Indicator -->
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>Membuka rak perpustakaan...</p>
+            <p>Menghubungkan ke Google Drive...</p>
         </div>
 
         <!-- Grid Rak Buku 3D -->
         <div class="book-grid" id="bookGrid">
-            <!-- Kartu Buku Interaktif dimasukkan via JS -->
+            <!-- Kartu Buku dari Google Drive dimasukkan via JS -->
         </div>
     </main>
 
@@ -85,7 +90,7 @@
                     <div class="modal-cover-box" id="modalCoverBox">
                         <i class="fa-solid fa-file-pdf modal-icon" id="modalIcon"></i>
                     </div>
-                    <a id="modalDownloadBtn" href="#" target="_blank" class="download-btn-primary" onclick="showToast('Mengunduh file...')">
+                    <a id="modalDownloadBtn" href="#" target="_blank" class="download-btn-primary" onclick="showToast('Mengunduh file dari Google Drive...')">
                         <i class="fa-solid fa-download"></i> Unduh Sekarang
                     </a>
                 </div>
@@ -102,11 +107,11 @@
         </div>
     </div>
 
-    <!-- Toast Notification Container -->
+    <!-- Toast Notification -->
     <div id="toast" class="toast">Notifikasi!</div>
 
     <footer>
-        <p>&copy; 2026 PustakaTugas. Interactive Drive Bookstore.</p>
+        <p>&copy; 2026 PustakaTugas. Integrated with Google Drive API v3.</p>
     </footer>
 
     <script src="script.js"></script>

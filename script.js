@@ -3,24 +3,32 @@ const API_KEY = 'AIzaSyDuzY6sP3KQ2vekT1Lgh3-NkK_zw09Kjkc';
 const ROOT_FOLDER_ID = '1RsFLkHJusICsij9OmKkwIGsSGW2BP5a1';
 
 let folderHistory = [{ id: ROOT_FOLDER_ID, name: 'Katalog Utama' }];
-let rawItems = []; // Data asli dari API
-let currentFilteredItems = [];
+let rawItems = [];
+const driveCache = {}; // Cache untuk mempercepat navigasi folder
 
-// Get Current Folder Object
 function getCurrentFolder() {
     return folderHistory[folderHistory.length - 1];
 }
 
-// Fetch Data dari Google Drive API
+// FUNGSI MEMANGGIL API GOOGLE DRIVE V3
 async function fetchDriveContents(folderId) {
     const loadingEl = document.getElementById('loading');
     const bookGrid = document.getElementById('bookGrid');
+
+    // Cek apakah data folder sudah ada di memori cache lokal
+    if (driveCache[folderId]) {
+        loadingEl.style.display = 'none';
+        rawItems = driveCache[folderId];
+        filterAndSort();
+        renderBreadcrumb();
+        return;
+    }
 
     loadingEl.style.display = 'block';
     bookGrid.innerHTML = '';
 
     const query = encodeURIComponent(`'${folderId}' in parents and trashed = false`);
-    const url = `https://www.googleapis.com/drive/v3/files?q=${query}&pageSize=20&fields=files(id,name,mimeType,description)&key=${API_KEY}`;
+    const url = `https://www.googleapis.com/drive/v3/files?q=${query}&pageSize=50&fields=files(id,name,mimeType,description)&key=${API_KEY}`;
 
     try {
         const response = await fetch(url);
@@ -28,27 +36,39 @@ async function fetchDriveContents(folderId) {
 
         loadingEl.style.display = 'none';
 
+        if (data.error) {
+            console.error('API Error Response:', data.error);
+            bookGrid.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; color: #ef4444; padding: 20px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+                    <p><strong>Gagal Memuat Data:</strong> ${data.error.message}</p>
+                </div>
+            `;
+            return;
+        }
+
         if (data.files && data.files.length > 0) {
+            driveCache[folderId] = data.files; // Simpan ke Cache
             rawItems = data.files;
             filterAndSort();
         } else {
             bookGrid.innerHTML = '<p style="text-align:center; grid-column: 1/-1; color: var(--text-secondary);">Folder ini kosong.</p>';
         }
     } catch (error) {
-        console.error('Error:', error);
-        loadingEl.innerHTML = '<p style="color:red; text-align:center;">Gagal memuat file dari Google Drive API.</p>';
+        console.error('Fetch Error:', error);
+        loadingEl.style.display = 'none';
+        bookGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #ef4444;">Terjadi kesalahan koneksi jaringan.</p>';
     }
 
     renderBreadcrumb();
 }
 
-// Render Kartu Buku 3D
+// RENDER KARTU BUKU 3D INTERAKTIF
 function renderBooks(items) {
     const bookGrid = document.getElementById('bookGrid');
     bookGrid.innerHTML = '';
 
     if (items.length === 0) {
-        bookGrid.innerHTML = '<p style="text-align:center; grid-column: 1/-1; color: var(--text-secondary);">Tidak ada file yang sesuai dengan pencarian/filter.</p>';
+        bookGrid.innerHTML = '<p style="text-align:center; grid-column: 1/-1; color: var(--text-secondary);">Tidak ada file yang sesuai.</p>';
         return;
     }
 
@@ -126,7 +146,7 @@ function renderBooks(items) {
     });
 }
 
-// Filter dan Sorting Interaktif
+// FILTER & SORTING
 function filterAndSort() {
     const searchQuery = document.getElementById('searchInput').value.toLowerCase();
     const filterType = document.getElementById('filterType').value;
@@ -134,12 +154,10 @@ function filterAndSort() {
 
     let result = [...rawItems];
 
-    // Filter Pencarian Teks
     if (searchQuery) {
         result = result.filter(item => item.name.toLowerCase().includes(searchQuery));
     }
 
-    // Filter Berdasarkan Tipe Format
     if (filterType !== 'all') {
         result = result.filter(item => {
             const ext = item.name.split('.').pop().toLowerCase();
@@ -153,7 +171,6 @@ function filterAndSort() {
         });
     }
 
-    // Pengurutan (Sorting)
     result.sort((a, b) => {
         if (sortBy === 'name-asc') return a.name.localeCompare(b.name);
         if (sortBy === 'name-desc') return b.name.localeCompare(a.name);
@@ -163,22 +180,15 @@ function filterAndSort() {
     renderBooks(result);
 }
 
-// Modal Preview Interaktif
+// MODAL PREVIEW & SUBFOLDER
 function openPreviewModal(id, title, extension, description) {
     const modal = document.getElementById('previewModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalBadge = document.getElementById('modalBadge');
-    const modalDesc = document.getElementById('modalDesc');
-    const modalDownloadBtn = document.getElementById('modalDownloadBtn');
-    const previewContainer = document.getElementById('previewFrameContainer');
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalBadge').textContent = extension;
+    document.getElementById('modalDesc').textContent = description;
+    document.getElementById('modalDownloadBtn').href = `https://drive.google.com/uc?export=download&id=${id}`;
 
-    modalTitle.textContent = title;
-    modalBadge.textContent = extension;
-    modalDesc.textContent = description;
-    modalDownloadBtn.href = `https://drive.google.com/uc?export=download&id=${id}`;
-
-    // Tampilkan Embed Google Drive Preview
-    previewContainer.innerHTML = `
+    document.getElementById('previewFrameContainer').innerHTML = `
         <iframe src="https://drive.google.com/file/d/${id}/preview"></iframe>
     `;
 
@@ -187,10 +197,9 @@ function openPreviewModal(id, title, extension, description) {
 
 function closeModal() {
     document.getElementById('previewModal').classList.remove('active');
-    document.getElementById('previewFrameContainer').innerHTML = ''; // Reset iframe
+    document.getElementById('previewFrameContainer').innerHTML = '';
 }
 
-// Navigasi Subfolder
 function openFolder(folderId, folderName) {
     folderHistory.push({ id: folderId, name: folderName });
     fetchDriveContents(folderId);
@@ -220,20 +229,18 @@ function renderBreadcrumb() {
     });
 }
 
-// Dark Mode Toggle
 function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
+    document.body.classList.toggle('light-mode');
     const icon = document.querySelector('#themeToggle i');
-    if (document.body.classList.contains('dark-mode')) {
-        icon.className = 'fa-solid fa-sun';
-        showToast('Mode Gelap Aktif');
-    } else {
+    if (document.body.classList.contains('light-mode')) {
         icon.className = 'fa-solid fa-moon';
         showToast('Mode Terang Aktif');
+    } else {
+        icon.className = 'fa-solid fa-sun';
+        showToast('Mode Gelap Aktif');
     }
 }
 
-// Toast Notification
 function showToast(message) {
     const toast = document.getElementById('toast');
     toast.textContent = message;
@@ -241,12 +248,20 @@ function showToast(message) {
     setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// Utility
 function escapeQuotes(str) {
     return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 }
 
-// Initial Load
+// EFEK PARALLAX PARAPET RAK BUKU SAAT DI-SCROLL
+window.addEventListener('scroll', () => {
+    const bg = document.getElementById('bookshelfBg');
+    if (bg) {
+        let scrollPos = window.scrollY;
+        bg.style.transform = `translateY(${scrollPos * 0.1}px)`;
+    }
+});
+
+// INITIAL LOAD
 document.addEventListener('DOMContentLoaded', () => {
     fetchDriveContents(ROOT_FOLDER_ID);
 });
