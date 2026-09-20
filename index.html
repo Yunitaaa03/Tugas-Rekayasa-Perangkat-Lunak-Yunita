@@ -1,39 +1,357 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Tugas</title>
+
+    <title>Tugas Store - Pusat Tugas</title>
+
     <link rel="stylesheet" href="style.css">
+
+    <!-- Font Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-    <div class="container">
-        <h1>Pengumpulan Tugas</h1>
-        <p>Silakan pilih tugas yang ingin diunduh.</p>
+    <!-- ================= HEADER ================= -->
+    <header class="header">
+        <div class="container navbar">
 
-        <div class="file">
-            <span>Tugas 1 - HTML.pdf</span>
-            <a href="file/tugas1.pdf" download>
-                Download
+            <a href="#" class="logo">
+                <span class="logo-icon">📚</span>
+                <span>Tugas<span class="logo-highlight">Store</span></span>
             </a>
+
+            <nav class="nav-menu">
+                <a href="#beranda">Beranda</a>
+                <a href="#kategori">Kategori</a>
+                <a href="#tugas">Tugas</a>
+                <a href="#tentang">Tentang</a>
+            </nav>
+
+            <button class="menu-button">☰</button>
+
+        </div>
+    </header>
+
+
+    <!-- ================= HERO ================= -->
+    <section class="hero" id="beranda">
+
+        <div class="container hero-content">
+
+            <div class="hero-text">
+
+                <span class="hero-label">📖 PUSAT TUGAS KULIAH</span>
+
+                <h1>
+                    Temukan Tugasmu,
+                    <span>Unduh Dengan Mudah.</span>
+                </h1>
+
+                <p>
+                    Koleksi tugas, laporan, modul, dan materi
+                    perkuliahan dalam satu tempat.
+                </p>
+
+                <div class="search-box">
+                    <span>🔍</span>
+                    <input
+                        type="text"
+                        placeholder="Cari tugas atau mata kuliah..."
+                    >
+                    <button>Cari</button>
+                </div>
+
+            </div>
+
+            <div class="hero-book">
+                <div class="book-shadow"></div>
+                <div class="book">
+                    <span>📚</span>
+                    <h3>MY<br>COLLEGE<br>LIBRARY</h3>
+                    <small>TUGAS STORE</small>
+                </div>
+            </div>
+
         </div>
 
-        <div class="file">
-            <span>Tugas 2 - Laporan.pdf</span>
-            <a href="file/tugas2.pdf" download>
-                Download
-            </a>
+    </section>
+
+
+    <!-- ================= KATEGORI ================= -->
+    <section class="category-section" id="kategori">
+
+        <div class="container">
+
+            <div class="section-heading">
+                <div>
+                    <span class="section-label">KATEGORI</span>
+                    <h2>Jelajahi Berdasarkan Mata Kuliah</h2>
+                </div>
+
+                <a href="#tugas" class="view-all">
+                    Lihat Semua →
+                </a>
+            </div>
+
+            <div class="category-grid">
+
+                <a href="#" class="category-card">
+                    <div class="category-icon blue">💻</div>
+                    <div>
+                        <h3>Pemrograman</h3>
+                        <p>12 Tugas</p>
+                    </div>
+                </a>
+
+                <a href="#" class="category-card">
+                    <div class="category-icon orange">🗄️</div>
+                    <div>
+                        <h3>Basis Data</h3>
+                        <p>8 Tugas</p>
+                    </div>
+                </a>
+
+                <a href="#" class="category-card">
+                    <div class="category-icon purple">🌐</div>
+                    <div>
+                        <h3>Jaringan</h3>
+                        <p>10 Tugas</p>
+                    </div>
+                </a>
+
+                <a href="#" class="category-card">
+                    <div class="category-icon green">⚡</div>
+                    <div>
+                        <h3>Elektronika</h3>
+                        <p>15 Tugas</p>
+                    </div>
+                </a>
+
+            </div>
+
         </div>
 
-        <div class="file">
-            <span>Tugas 3 - Source Code.zip</span>
-            <a href="file/laporan.zip" download>
-                Download
-            </a>
+    </section>
+
+
+    <!-- ================= TUGAS ================= -->
+    <section class="task-section" id="tugas">
+
+        <div class="container">
+
+            <div class="section-heading">
+                <div>
+                    <span class="section-label">KOLEKSI TERBARU</span>
+                    <h2>Tugas Terbaru</h2>
+                </div>
+
+                <a href="#" class="view-all">
+                    Lihat Semua →
+                </a>
+            </div>
+
+
+            <div class="task-grid">
+
+                <!-- CARD 1 -->
+                <article class="task-card">
+
+                    <div class="book-cover cover-blue">
+                        <span class="file-type">PDF</span>
+                        <div class="cover-icon">💻</div>
+                        <h3>PEMROGRAMAN<br>WEB</h3>
+                        <p>MODUL TUGAS</p>
+                    </div>
+
+                    <div class="task-info">
+                        <span class="task-category">PEMROGRAMAN</span>
+
+                        <h3>Praktikum Pemrograman Web</h3>
+
+                        <p class="task-description">
+                            Tugas praktikum HTML, CSS dan JavaScript.
+                        </p>
+
+                        <div class="task-bottom">
+                            <span class="file-size">📄 PDF • 2.4 MB</span>
+
+                            <a href="#" class="download-button">
+                                Download
+                            </a>
+                        </div>
+                    </div>
+
+                </article>
+
+
+                <!-- CARD 2 -->
+                <article class="task-card">
+
+                    <div class="book-cover cover-orange">
+                        <span class="file-type">PDF</span>
+                        <div class="cover-icon">🗄️</div>
+                        <h3>BASIS<br>DATA</h3>
+                        <p>DATABASE</p>
+                    </div>
+
+                    <div class="task-info">
+                        <span class="task-category">BASIS DATA</span>
+
+                        <h3>Perancangan Database</h3>
+
+                        <p class="task-description">
+                            Tugas ERD dan perancangan basis data.
+                        </p>
+
+                        <div class="task-bottom">
+                            <span class="file-size">📄 PDF • 1.8 MB</span>
+
+                            <a href="#" class="download-button">
+                                Download
+                            </a>
+                        </div>
+                    </div>
+
+                </article>
+
+
+                <!-- CARD 3 -->
+                <article class="task-card">
+
+                    <div class="book-cover cover-purple">
+                        <span class="file-type">ZIP</span>
+                        <div class="cover-icon">🌐</div>
+                        <h3>JARINGAN<br>KOMPUTER</h3>
+                        <p>PRAKTIKUM</p>
+                    </div>
+
+                    <div class="task-info">
+                        <span class="task-category">JARINGAN</span>
+
+                        <h3>Praktikum Jaringan Komputer</h3>
+
+                        <p class="task-description">
+                            Source code dan laporan praktikum.
+                        </p>
+
+                        <div class="task-bottom">
+                            <span class="file-size">📦 ZIP • 5.2 MB</span>
+
+                            <a href="#" class="download-button">
+                                Download
+                            </a>
+                        </div>
+                    </div>
+
+                </article>
+
+
+                <!-- CARD 4 -->
+                <article class="task-card">
+
+                    <div class="book-cover cover-green">
+                        <span class="file-type">DOCX</span>
+                        <div class="cover-icon">⚡</div>
+                        <h3>DASAR<br>ELEKTRONIKA</h3>
+                        <p>MODUL</p>
+                    </div>
+
+                    <div class="task-info">
+                        <span class="task-category">ELEKTRONIKA</span>
+
+                        <h3>Dasar-Dasar Elektronika</h3>
+
+                        <p class="task-description">
+                            Modul dan tugas dasar elektronika.
+                        </p>
+
+                        <div class="task-bottom">
+                            <span class="file-size">📄 DOCX • 3.1 MB</span>
+
+                            <a href="#" class="download-button">
+                                Download
+                            </a>
+                        </div>
+                    </div>
+
+                </article>
+
+            </div>
+
         </div>
-    </div>
+
+    </section>
+
+
+    <!-- ================= CTA ================= -->
+    <section class="cta-section">
+
+        <div class="container">
+
+            <div class="cta-box">
+
+                <div>
+                    <span class="section-label">TUGAS KAMU ADA DI SINI</span>
+
+                    <h2>
+                        Semua tugas dalam
+                        satu tempat.
+                    </h2>
+
+                    <p>
+                        Tidak perlu mencari file di berbagai tempat.
+                        Temukan tugas yang kamu butuhkan dengan cepat.
+                    </p>
+                </div>
+
+                <a href="#tugas" class="cta-button">
+                    📚 Lihat Koleksi
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="footer" id="tentang">
+
+        <div class="container footer-content">
+
+            <div>
+                <a href="#" class="logo footer-logo">
+                    <span class="logo-icon">📚</span>
+                    <span>Tugas<span class="logo-highlight">Store</span></span>
+                </a>
+
+                <p>
+                    Pusat tugas dan materi perkuliahan
+                    dalam satu tempat.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <a href="#beranda">Beranda</a>
+                <a href="#kategori">Kategori</a>
+                <a href="#tugas">Tugas</a>
+            </div>
+
+        </div>
+
+        <div class="copyright">
+            © 2026 TugasStore. Semua hak dilindungi.
+        </div>
+
+    </footer>
 
 </body>
 </html>
+```
