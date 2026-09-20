@@ -3,44 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pustaka Tugas - Digital Bookstore</title>
+    <title>PustakaTugas 3D - Digital Bookstore</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="light-mode">
 
+    <!-- Header / Navbar -->
     <header class="navbar">
         <div class="logo">
-            <i class="fa-solid fa-book-open-reader"></i>
+            <i class="fa-solid fa-book-journal-whills"></i>
             <span>PustakaTugas</span>
         </div>
+        
         <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Cari nama file atau tugas..." onkeyup="filterBooks()">
+            <input type="text" id="searchInput" placeholder="Cari buku atau folder..." onkeyup="filterAndSort()">
             <button><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+
+        <div class="nav-actions">
+            <button id="themeToggle" class="icon-btn" title="Ubah Tema" onclick="toggleTheme()">
+                <i class="fa-solid fa-moon"></i>
+            </button>
         </div>
     </header>
 
+    <!-- Banner Hero Interaktif -->
     <section class="hero">
-        <div class="hero-text">
-            <h1>Toko Buku Digital Tugas Kuliah</h1>
-            <p>Terhubung langsung dengan Google Drive API v3 via Client-Side JavaScript.</p>
+        <div class="hero-content">
+            <h1><i class="fa-solid fa-graduation-cap"></i> Rak Tugas Interaktif</h1>
+            <p>Jelajahi, pratinjau, dan unduh dokumen kuliah langsung dari Google Drive.</p>
         </div>
     </section>
 
+    <!-- Container Utama -->
     <main class="container">
-        <h2 class="section-title">Katalog File Tugas</h2>
-        
-        <div class="loading" id="loading">
-            <i class="fa-solid fa-spinner fa-spin"></i> Memuat data dari Google Drive...
+        <!-- Control Panel: Breadcrumb, Filter, & Sort -->
+        <div class="control-panel">
+            <div class="breadcrumb" id="breadcrumb">
+                <!-- Breadcrumb dinamis via JS -->
+            </div>
+
+            <div class="filter-sort-group">
+                <select id="filterType" onchange="filterAndSort()">
+                    <option value="all"> Semua Format</option>
+                    <option value="folder"> Folder</option>
+                    <option value="pdf"> PDF</option>
+                    <option value="doc"> Word (DOC)</option>
+                    <option value="archive"> Zip/Rar</option>
+                    <option value="png"> PNG</option>
+                    <option value="jpg"> JPG</option>
+                </select>
+
+                <select id="sortBy" onchange="filterAndSort()">
+                    <option value="name-asc">Nama (A - Z)</option>
+                    <option value="name-desc">Nama (Z - A)</option>
+                </select>
+            </div>
         </div>
 
+        <h2 class="section-title" id="currentFolderTitle">Katalog Utama</h2>
+
+        <!-- Loading Indicator -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Membuka rak perpustakaan...</p>
+        </div>
+
+        <!-- Grid Rak Buku 3D -->
         <div class="book-grid" id="bookGrid">
-            <!-- Kartu Buku dimuat dinamis oleh JavaScript -->
+            <!-- Kartu Buku Interaktif dimasukkan via JS -->
         </div>
     </main>
 
+    <!-- MODAL PREVIEW BUKU TERBUKA -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal-book">
+            <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-content">
+                <div class="modal-left">
+                    <div class="modal-cover-box" id="modalCoverBox">
+                        <i class="fa-solid fa-file-pdf modal-icon" id="modalIcon"></i>
+                    </div>
+                    <a id="modalDownloadBtn" href="#" target="_blank" class="download-btn-primary" onclick="showToast('Mengunduh file...')">
+                        <i class="fa-solid fa-download"></i> Unduh Sekarang
+                    </a>
+                </div>
+                <div class="modal-right">
+                    <span class="badge-modal" id="modalBadge">PDF</span>
+                    <h2 id="modalTitle">Judul Tugas</h2>
+                    <p class="modal-desc" id="modalDesc">Deskripsi file akan muncul di sini.</p>
+                    
+                    <div class="preview-frame-container" id="previewFrameContainer">
+                        <!-- Frame iframe google drive preview -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast" class="toast">Notifikasi!</div>
+
     <footer>
-        <p>&copy; 2026 PustakaTugas. Hosted on GitHub Pages & Powered by Google Drive API.</p>
+        <p>&copy; 2026 PustakaTugas. Interactive Drive Bookstore.</p>
     </footer>
 
     <script src="script.js"></script>
