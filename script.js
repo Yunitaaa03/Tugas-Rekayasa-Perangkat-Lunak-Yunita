@@ -4,7 +4,31 @@ const ROOT_FOLDER_ID = '1RsFLkHJusICsij9OmKkwIGsSGW2BP5a1';
 
 let folderHistory = [{ id: ROOT_FOLDER_ID, name: 'Katalog Utama' }];
 let rawItems = [];
-const driveCache = {}; // Cache untuk mempercepat navigasi folder
+const driveCache = {};
+let isSoundEnabled = true;
+
+// EFEK SUARA BUKU (Sintetis Web Audio API agar tanpa file external)
+function playPageFlipSound() {
+    if (!isSoundEnabled) return;
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.1);
+    } catch(e){}
+}
 
 function getCurrentFolder() {
     return folderHistory[folderHistory.length - 1];
@@ -15,10 +39,10 @@ async function fetchDriveContents(folderId) {
     const loadingEl = document.getElementById('loading');
     const bookGrid = document.getElementById('bookGrid');
 
-    // Cek apakah data folder sudah ada di memori cache lokal
     if (driveCache[folderId]) {
         loadingEl.style.display = 'none';
         rawItems = driveCache[folderId];
+        updateStats(rawItems);
         filterAndSort();
         renderBreadcrumb();
         return;
@@ -47,11 +71,13 @@ async function fetchDriveContents(folderId) {
         }
 
         if (data.files && data.files.length > 0) {
-            driveCache[folderId] = data.files; // Simpan ke Cache
+            driveCache[folderId] = data.files;
             rawItems = data.files;
+            updateStats(rawItems);
             filterAndSort();
         } else {
             bookGrid.innerHTML = '<p style="text-align:center; grid-column: 1/-1; color: var(--text-secondary);">Folder ini kosong.</p>';
+            updateStats([]);
         }
     } catch (error) {
         console.error('Fetch Error:', error);
@@ -62,8 +88,26 @@ async function fetchDriveContents(folderId) {
     renderBreadcrumb();
 }
 
+// HITUNG STATISTIK FILE
+function updateStats(items) {
+    let folders = 0, pdfs = 0, docs = 0, zips = 0;
+
+    items.forEach(item => {
+        const ext = item.name.split('.').pop().toLowerCase();
+        if (item.mimeType === 'application/vnd.google-apps.folder') folders++;
+        else if (ext === 'pdf') pdfs++;
+        else if (['doc', 'docx'].includes(ext)) docs++;
+        else if (['zip', 'rar'].includes(ext)) zips++;
+    });
+
+    document.getElementById('statFolders').textContent = folders;
+    document.getElementById('statPdfs').textContent = pdfs;
+    document.getElementById('statDocs').textContent = docs;
+    document.getElementById('statZips').textContent = zips;
+}
+
 // RENDER KARTU BUKU 3D INTERAKTIF
-function renderBooks(items) {
+function renderBooks(items, searchQuery = '') {
     const bookGrid = document.getElementById('bookGrid');
     bookGrid.innerHTML = '';
 
@@ -86,8 +130,16 @@ function renderBooks(items) {
         const downloadUrl = `https://drive.google.com/uc?export=download&id=${item.id}`;
         const description = item.description || 'Dokumen resmi terverifikasi di Google Drive.';
 
+        // Highlight pencarian
+        let displayName = item.name;
+        if (searchQuery) {
+            const regex = new RegExp(`(${searchQuery})`, 'gi');
+            displayName = item.name.replace(regex, '<mark>$1</mark>');
+        }
+
         const card = document.createElement('div');
         card.className = 'book-card-3d';
+        card.onmouseenter = () => playPageFlipSound();
 
         if (isFolder) {
             card.innerHTML = `
@@ -98,7 +150,7 @@ function renderBooks(items) {
                             <span class="badge">Folder</span>
                         </div>
                         <div class="book-info-front">
-                            <h3 class="book-title">${item.name}</h3>
+                            <h3 class="book-title">${displayName}</h3>
                             <p class="hover-hint"><i class="fa-solid fa-arrows-rotate"></i> Arahkan kursor untuk opsi</p>
                         </div>
                     </div>
@@ -122,7 +174,7 @@ function renderBooks(items) {
                             <span class="badge">${extension}</span>
                         </div>
                         <div class="book-info-front">
-                            <h3 class="book-title">${item.name}</h3>
+                            <h3 class="book-title">${displayName}</h3>
                             <p class="hover-hint"><i class="fa-solid fa-arrows-rotate"></i> Arahkan kursor untuk opsi</p>
                         </div>
                     </div>
@@ -136,6 +188,9 @@ function renderBooks(items) {
                             <a href="${downloadUrl}" target="_blank" class="btn-download" onclick="showToast('Mengunduh file...')">
                                 <i class="fa-solid fa-download"></i> Unduh File
                             </a>
+                            <button onclick="copyDownloadLink('${downloadUrl}')" class="btn-copy">
+                                <i class="fa-solid fa-link"></i> Salin Link
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -146,7 +201,11 @@ function renderBooks(items) {
     });
 }
 
-// FILTER & SORTING
+function copyDownloadLink(url) {
+    navigator.clipboard.writeText(url);
+    showToast('Link download berhasil disalin!');
+}
+
 function filterAndSort() {
     const searchQuery = document.getElementById('searchInput').value.toLowerCase();
     const filterType = document.getElementById('filterType').value;
@@ -177,11 +236,11 @@ function filterAndSort() {
         return 0;
     });
 
-    renderBooks(result);
+    renderBooks(result, searchQuery);
 }
 
-// MODAL PREVIEW & SUBFOLDER
 function openPreviewModal(id, title, extension, description) {
+    playPageFlipSound();
     const modal = document.getElementById('previewModal');
     document.getElementById('modalTitle').textContent = title;
     document.getElementById('modalBadge').textContent = extension;
@@ -201,11 +260,13 @@ function closeModal() {
 }
 
 function openFolder(folderId, folderName) {
+    playPageFlipSound();
     folderHistory.push({ id: folderId, name: folderName });
     fetchDriveContents(folderId);
 }
 
 function navigateToBreadcrumb(index) {
+    playPageFlipSound();
     folderHistory = folderHistory.slice(0, index + 1);
     fetchDriveContents(getCurrentFolder().id);
 }
@@ -241,6 +302,18 @@ function toggleTheme() {
     }
 }
 
+function toggleSound() {
+    isSoundEnabled = !isSoundEnabled;
+    const icon = document.querySelector('#soundToggle i');
+    if (isSoundEnabled) {
+        icon.className = 'fa-solid fa-volume-high';
+        showToast('Suara FX Aktif');
+    } else {
+        icon.className = 'fa-solid fa-volume-xmark';
+        showToast('Suara FX Dibatalkan');
+    }
+}
+
 function showToast(message) {
     const toast = document.getElementById('toast');
     toast.textContent = message;
@@ -252,16 +325,66 @@ function escapeQuotes(str) {
     return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 }
 
-// EFEK PARALLAX PARAPET RAK BUKU SAAT DI-SCROLL
-window.addEventListener('scroll', () => {
+/* INTERAKSI MOUSE PARALLAX & SPOTLIGHT */
+document.addEventListener('mousemove', (e) => {
     const bg = document.getElementById('bookshelfBg');
-    if (bg) {
-        let scrollPos = window.scrollY;
-        bg.style.transform = `translateY(${scrollPos * 0.1}px)`;
+    const spotlight = document.getElementById('shelfSpotlight');
+    const shelves = document.querySelectorAll('.shelf-shelf');
+
+    const x = e.clientX;
+    const y = e.clientY;
+
+    if (spotlight) {
+        spotlight.style.background = `radial-gradient(circle 350px at ${x}px ${y}px, rgba(245, 158, 11, 0.18), transparent 80%)`;
     }
+
+    const moveX = (x - window.innerWidth / 2) / 45;
+    const moveY = (y - window.innerHeight / 2) / 45;
+
+    if (bg) {
+        bg.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.02)`;
+    }
+
+    shelves.forEach(shelf => {
+        const speed = shelf.getAttribute('data-speed') || 2;
+        const shelfX = (x - window.innerWidth / 2) / (100 / speed);
+        shelf.style.transform = `translateX(${shelfX}px)`;
+    });
 });
 
-// INITIAL LOAD
+function createGoldParticles() {
+    const container = document.getElementById('particlesContainer');
+    if (!container) return;
+
+    for (let i = 0; i < 25; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+
+        const size = Math.random() * 4 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+
+        const duration = Math.random() * 8 + 6;
+        const delay = Math.random() * 5;
+        particle.style.animationDuration = `${duration}s`;
+        particle.style.animationDelay = `${delay}s`;
+
+        container.appendChild(particle);
+    }
+}
+
+// LOGIKA INTRO SCREEN & TIMER LOADING DATA GOOGLE DRIVE
 document.addEventListener('DOMContentLoaded', () => {
+    createGoldParticles();
+
+    const introScreen = document.getElementById('introScreen');
+
     fetchDriveContents(ROOT_FOLDER_ID);
+
+    setTimeout(() => {
+        if (introScreen) {
+            introScreen.classList.add('fade-out');
+        }
+    }, 2600);
 });

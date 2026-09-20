@@ -3,17 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PustakaTugas - Digital Bookstore</title>
+    <title>PustakaTugas - Digital Bookstore 3D Interaktif</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="dark-mode">
 
-    <!-- BACKGROUND ANIMASI RAK BUKU NAIK DARI BAWAH -->
+    <!-- INTRO ANIMASI BUKU MASUK KE LEMARI -->
+    <div class="intro-screen" id="introScreen">
+        <div class="intro-bookshelf">
+            <div class="intro-shelf-board"></div>
+            <div class="intro-book book-1"><span class="spine-text">PDF</span></div>
+            <div class="intro-book book-2"><span class="spine-text">DOC</span></div>
+            <div class="intro-book book-3"><span class="spine-text">ZIP</span></div>
+            <div class="intro-book book-4"><span class="spine-text">DRIVE</span></div>
+        </div>
+        <p class="intro-text"><i class="fa-solid fa-book-bookmark fa-spin"></i> Menata tugas ke dalam lemari...</p>
+    </div>
+
+    <!-- BACKGROUND INTERAKTIF RAK BUKU & PARTIKEL -->
     <div class="bookshelf-bg" id="bookshelfBg">
-        <div class="shelf-shelf top-shelf"></div>
-        <div class="shelf-shelf middle-shelf"></div>
-        <div class="shelf-shelf bottom-shelf"></div>
+        <div class="shelf-spotlight" id="shelfSpotlight"></div>
+        <div class="shelf-shelf top-shelf" data-speed="2"></div>
+        <div class="shelf-shelf middle-shelf" data-speed="4"></div>
+        <div class="shelf-shelf bottom-shelf" data-speed="6"></div>
+        <div class="particles-container" id="particlesContainer"></div>
     </div>
 
     <!-- Header / Navbar -->
@@ -29,6 +43,10 @@
         </div>
 
         <div class="nav-actions">
+            <!-- Tombol Mute Sound FX -->
+            <button id="soundToggle" class="icon-btn" title="Toggle Sound FX" onclick="toggleSound()">
+                <i class="fa-solid fa-volume-high"></i>
+            </button>
             <button id="themeToggle" class="icon-btn" title="Ubah Tema" onclick="toggleTheme()">
                 <i class="fa-solid fa-sun"></i>
             </button>
@@ -39,17 +57,23 @@
     <section class="hero">
         <div class="hero-content">
             <h1><i class="fa-solid fa-graduation-cap"></i> Rak Tugas Interaktif</h1>
-            <p>Terhubung langsung dengan Google Drive API untuk menjelajahi dan mengunduh berkas kuliah.</p>
+            <p>Jelajahi, pratinjau, dan unduh dokumen kuliah langsung dari Google Drive.</p>
         </div>
     </section>
 
     <!-- Container Utama -->
     <main class="container">
-        <!-- Control Panel: Breadcrumb Navigasi & Filter -->
+        <!-- Statistik File Ringkas -->
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item"><i class="fa-solid fa-folder"></i> Folder: <span id="statFolders">0</span></div>
+            <div class="stat-item"><i class="fa-solid fa-file-pdf"></i> PDF: <span id="statPdfs">0</span></div>
+            <div class="stat-item"><i class="fa-solid fa-file-word"></i> Word: <span id="statDocs">0</span></div>
+            <div class="stat-item"><i class="fa-solid fa-file-zipper"></i> Zip: <span id="statZips">0</span></div>
+        </div>
+
+        <!-- Control Panel: Breadcrumb & Filter -->
         <div class="control-panel">
-            <div class="breadcrumb" id="breadcrumb">
-                <!-- Breadcrumb dinamis via JS -->
-            </div>
+            <div class="breadcrumb" id="breadcrumb"></div>
 
             <div class="filter-sort-group">
                 <select id="filterType" onchange="filterAndSort()">
@@ -76,12 +100,10 @@
         </div>
 
         <!-- Grid Rak Buku 3D -->
-        <div class="book-grid" id="bookGrid">
-            <!-- Kartu Buku dari Google Drive dimasukkan via JS -->
-        </div>
+        <div class="book-grid" id="bookGrid"></div>
     </main>
 
-    <!-- MODAL PREVIEW BUKU TERBUKA -->
+    <!-- MODAL PREVIEW -->
     <div class="modal-overlay" id="previewModal">
         <div class="modal-book">
             <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -90,7 +112,7 @@
                     <div class="modal-cover-box" id="modalCoverBox">
                         <i class="fa-solid fa-file-pdf modal-icon" id="modalIcon"></i>
                     </div>
-                    <a id="modalDownloadBtn" href="#" target="_blank" class="download-btn-primary" onclick="showToast('Mengunduh file dari Google Drive...')">
+                    <a id="modalDownloadBtn" href="#" target="_blank" class="download-btn-primary" onclick="showToast('Mengunduh file...')">
                         <i class="fa-solid fa-download"></i> Unduh Sekarang
                     </a>
                 </div>
@@ -98,10 +120,7 @@
                     <span class="badge-modal" id="modalBadge">PDF</span>
                     <h2 id="modalTitle">Judul Tugas</h2>
                     <p class="modal-desc" id="modalDesc">Deskripsi file akan muncul di sini.</p>
-                    
-                    <div class="preview-frame-container" id="previewFrameContainer">
-                        <!-- Frame iframe google drive preview -->
-                    </div>
+                    <div class="preview-frame-container" id="previewFrameContainer"></div>
                 </div>
             </div>
         </div>
@@ -111,7 +130,7 @@
     <div id="toast" class="toast">Notifikasi!</div>
 
     <footer>
-        <p>&copy; 2026 PustakaTugas. Integrated with Google Drive API v3.</p>
+        <p>&copy; 2026 PustakaTugas. Interactive Drive Bookstore.</p>
     </footer>
 
     <script src="script.js"></script>
