@@ -1,6 +1,6 @@
 // GANTI DENGAN API KEY DAN FOLDER ID ANDA
-const API_KEY = 'AIzaSyDuzY6sP3KQ2vekT1Lgh3-NkK_zw09Kjkc';
-const ROOT_FOLDER_ID = '1RsFLkHJusICsij9OmKkwIGsSGW2BP5a1';
+const API_KEY = 'AIzaSyDtNPanLUe87ajc_3Fsgj38obFwYbZkArc';
+const ROOT_FOLDER_ID = '1Mlj-U0cFIvPonzcTccz5xzr1uSi_0fYC';
 
 let folderHistory = [{ id: ROOT_FOLDER_ID, name: 'Katalog Utama' }];
 let rawItems = [];
